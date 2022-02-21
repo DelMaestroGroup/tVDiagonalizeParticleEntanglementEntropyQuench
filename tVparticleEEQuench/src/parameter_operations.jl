@@ -17,10 +17,13 @@ function parse_commandline()
             required = true
         "--out"
             metavar = "FOLDER"
-            help = "path to output folder"
+            help = "path to output folder, default ./"
         "--tmp"
             metavar = "FOLDER"
             help = "folder for hamiltonian storage location"
+        "--out-states"
+            metavar = "FOLDER"
+            help = "folder for states storage location, default is --out"
         "--out-obdm" 
             metavar = "FOLDER"
             help = "folder for obdm storage location (if --obdm provided)"
@@ -82,26 +85,35 @@ function parse_commandline()
             help = "initial Vp"
             arg_type = Float64
             default = 0.0
-        "--V_start"
+        "--V-start"
             metavar = "V_start"
             help = "start V"
             arg_type = Float64
             default = -2.0
-        "--V_end"
+        "--V-end"
             metavar = "V_end"
             help = "end V"
             arg_type = Float64
             default = 2.0
-        "--V_step"
-            metavar = "V_step"
-            help = "step in V"
-            arg_type = Float64
-            default = 0.1 
+        "--V-num"
+            metavar = "V_num"
+            help = "num of V values"
+            arg_type = Int64
+            default = 100 
+        "--V-list"
+            metavar = "V_num"
+            nargs = '*' 
+            help = "multiple V values used as V_array and ignore V-start, V-end, V-step, and --logspace"
+            arg_type = Float64 
+            required = false
         "--Vp"
             metavar = "Vp"
             help = "final Vp"
             arg_type = Float64
             default = 0.0
+        "--logspace" 
+            help = "logarithmic spacing of V values around 0"
+            action = :store_true 
         "--t"
             metavar = "t"
             help = "t value"
@@ -172,8 +184,14 @@ function unpack_parameters(c::Dict{Symbol,Any})
     Vp0 = c[:Vp0]
     # Initial time
     time_min = c[:time_min]
-    # Interaction paramers V, V' 
-    V_array = collect(c[:V_start]:c[:V_step]:c[:V_end])
+    # Interaction paramers V, V'  
+    if   ~(c[:V_list]===nothing) && length(c[:V_list])> 0
+        V_array = c[:V_list] 
+    elseif c[:logspace]
+        V_array = log_range(c[:V_start],c[:V_end],c[:V_num]) 
+    else
+        V_array = lin_range(c[:V_start],c[:V_end],c[:V_num])
+    end
     Vp = c[:Vp]
     # check parameters
     if M!=2N

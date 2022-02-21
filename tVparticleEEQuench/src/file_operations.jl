@@ -31,6 +31,11 @@ function create_file_output_handler_and_write_headers(
     else
         out_folder_obdm = c[:out_obdm]
     end
+    if c[:out_states] === nothing
+        out_folder_states = out_folder
+    else
+        out_folder_states = c[:out_states]
+    end
     calculation_label = @sprintf "M%02d_N%02d_t%+5.3f_Vp%+5.3f_Vp0%+5.3f_V{:+5.3f}_V0%+5.3f_dt%6.4f_tstart%06.3f_tendf_%06.3f" M N t Vp Vp0 V0 Δt time_range[1] time_range[end]
     # create file output handler
     file_handler = FileOutputHandler(~c[:no_flush])
@@ -99,15 +104,16 @@ function create_file_output_handler_and_write_headers(
                 ftime_min= time_range[1]
             end
             Ψt_output = @sprintf "psioft_%02d_%02d_%+5.3f_%+5.3f_{:+5.3f}_%+5.3f_%6.4f_%06.3f_%06.3f.dat" M N V0 Vp0 Vp Δt ftime_min ftime_max
+            
         else
-            Ψt_output=c[:states_file]
+            Ψt_output=c[:states_file]  
         end
         # we handle writing Ψ with a different function and only grab the file using the handler
         data_to_str = x->nothing
         # add to handler, open later
-        for V in V_array 
-            path = joinpath(out_folder,format(Ψt_output,V))
-            add!(file_handler,path,data_to_str,handler_name;hname_format=hname_format,replace_list=[V]) 
+        for V in V_array      
+            path_V = joinpath(out_folder_states,format(Ψt_output,V) ) 
+            add!(file_handler,path_V,data_to_str,handler_name;hname_format=hname_format,replace_list=[V]) 
         end
     end
     # 2.5 obdm
@@ -166,8 +172,17 @@ function write_headers_to_files(
     return nothing
 end
 
-function close_file_handler(file_handler::FileOutputHandler,V::Float64)
-    for handler_name in ["particleEE","spatialEE","g2"]
+function close_file_handler(file_handler::FileOutputHandler,c::Dict{Symbol,Any},V::Float64)
+    if c[:spatial] && c[:g2]
+        h_names = ["particleEE","spatialEE","g2"]
+    elseif c[:spatial]
+        h_names = ["particleEE","spatialEE"]
+    elseif c[:g2]
+        h_names = ["particleEE","g2"]
+    else
+        h_names = ["particleEE"]
+    end
+    for handler_name in h_names
         write_str(file_handler,handler_name, "\n\n Calculation finished at  $(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"))"; replace_list=[V])  
         close(file_handler,handler_name; replace_list=[V]) 
     end

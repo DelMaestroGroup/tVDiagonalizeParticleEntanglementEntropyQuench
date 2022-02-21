@@ -89,7 +89,7 @@ function main()
                     calc_spatial = c[:spatial],
                     calc_g2 = c[:g2] )
             # close files
-            close_file_handler(file_handler,V)
+            close_file_handler(file_handler,c,V)
         end
  
     end
