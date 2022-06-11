@@ -14,7 +14,7 @@ Calculate the particle entanglement entropy for an eigenstate of the one-site-tr
 """
 function particle_entropy_Ts(L::Int, N::Int, Asize::Int, d::Vector{ComplexF64}, measure_obdm::Bool, AmatrixStructure:: Array{Int64,3})
 
-    SRen = zeros(Float64,11)
+    SRen = zeros(Float64,12)
     DimA=Int64
     DimB=Int64
     DimAdA=Int64
@@ -102,6 +102,9 @@ function particle_entropy_Ts(L::Int, N::Int, Asize::Int, d::Vector{ComplexF64}, 
        λ[q*NumOfCyclesA+1:q*NumOfCyclesA+NumOfCyclesA]=S[1:NumOfCyclesA]
     end
 
+    # sort lambda for numerical stability
+    sort!(λ)
+
    # construct the spatial OBDM
    if measure_obdm && Asize == 1
        obdm = zeros(Float64, DimA)
@@ -117,6 +120,7 @@ function particle_entropy_Ts(L::Int, N::Int, Asize::Int, d::Vector{ComplexF64}, 
        end
    end
 
+    # check for numerical errors, as normalization should be 1.0
     err = abs(sum(λ.^1) - 1.0)
     if err > 1e-12
         print("RDM eigenvalue error ", err)
@@ -137,6 +141,8 @@ function particle_entropy_Ts(L::Int, N::Int, Asize::Int, d::Vector{ComplexF64}, 
     end 
     # Renyi of 1/2: 
     SRen[11] =2*log(sum(sqrt.(λ)))-LogNn
+    # Renyi for alpha->inf
+    SRen[12] =-1.0*log(maximum(λ))-LogNn
 
     if measure_obdm && Asize==1
         return SRen,obdm

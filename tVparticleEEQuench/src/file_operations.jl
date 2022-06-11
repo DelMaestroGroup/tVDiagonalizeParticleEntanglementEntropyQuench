@@ -44,7 +44,7 @@ function create_file_output_handler_and_write_headers(
         handler_name = "particleEE"
         hname_format = "_V{:5.3f}"
         # function to convert data to string
-        out_str_pe_01 = (t,data)->@sprintf "%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E\n" t data...
+        out_str_pe_01 = (t,data)->@sprintf "%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E\n" t data...
         # add file series to handler (files will be opend when first written to)
         for V in V_array
             path = joinpath(out_folder,@sprintf "particle_entanglement_n%02d_%s.dat" Asize format(calculation_label,V))  
@@ -56,7 +56,7 @@ function create_file_output_handler_and_write_headers(
         handler_name = "spatialEE"
         hname_format = "_V{:5.3f}"  
         # function to convert data to string
-        out_str_se_02 = (t,data)->@sprintf "%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E\n" t data...
+        out_str_se_02 = (t,data)->@sprintf "%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E%24.12E\n" t data...
         # add to handler, open later
         for V in V_array
             path = joinpath(out_folder,@sprintf "spatial_entanglement_l%02d_%s.dat" ℓsize format(calculation_label,V))
@@ -151,12 +151,12 @@ function write_headers_to_files(
     # 2.1 particleEE
     write_str(file_handler,"particleEE", "# M=$(M), N=$(N), V0=$(V0), Vp0=$(Vp0), Vp=$(Vp), V=$(V), t=$(t), n=$(Asize), tstart=$(c[:time_min]), tstop=$(c[:time_max]), tstep=$(c[:time_step]), $(boundary)\n";replace_list=[V])
     write_str(file_handler,"particleEE", "# start time $(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"))\n";replace_list=[V])
-    write_str(file_handler,"particleEE",(@sprintf "#%24s#%24s#%24s%24s#%24s#%24s#%24s#%24s#%24s#%24s#%24s#%24s\n" "t" "S₁(n=$(Asize))" "S₂(n=$(Asize))" "S₃(n=$(Asize))" "S₄(n=$(Asize))" "S₅(n=$(Asize))" "S₆(n=$(Asize))" "S₇(n=$(Asize))" "S₈(n=$(Asize))" "S₉(n=$(Asize))" "S₁₀(n=$(Asize))" "S₀₋₅(n=$(Asize))");replace_list=[V])
+    write_str(file_handler,"particleEE",(@sprintf "#%24s%24s%24s%24s%24s%24s%24s%24s%24s%24s%24s%24s%24s\n" "t" "S₁(n=$(Asize))" "S₂(n=$(Asize))" "S₃(n=$(Asize))" "S₄(n=$(Asize))" "S₅(n=$(Asize))" "S₆(n=$(Asize))" "S₇(n=$(Asize))" "S₈(n=$(Asize))" "S₉(n=$(Asize))" "S₁₀(n=$(Asize))" "S₀₋₅(n=$(Asize))" "Sinf(n=$(Asize))");replace_list=[V])
     # 2.2 spatialEE
     if c[:spatial] 
     write_str(file_handler,"spatialEE", "# M=$(M), N=$(N), V0=$(V0), Vp0=$(Vp0), Vp=$(Vp), V=$(V), t=$(t), l=$(ℓsize), tstart=$(c[:time_min]), tstop=$(c[:time_max]), tstep=$(c[:time_step]), $(boundary)\n";replace_list=[V])
     write_str(file_handler,"spatialEE", "# start time $(Dates.format(now(), "yyyy-mm-dd HH:MM:SS"))\n";replace_list=[V])
-    write_str(file_handler,"spatialEE",(@sprintf "#%24s#%24s#%24s%24s#%24s#%24s#%24s#%24s#%24s#%24s#%24s#%24s\n" "V" "S₁(n=$(ℓsize))" "S₂(n=$(ℓsize))" "S₃(n=$(ℓsize))" "S₄(n=$(ℓsize))" "S₅(n=$(ℓsize))" "S₆(n=$(ℓsize))" "S₇(n=$(ℓsize))" "S₈(n=$(ℓsize))" "S₉(n=$(ℓsize))" "S₁₀(n=$(ℓsize))" "S₀₋₅(n=$(ℓsize))");replace_list=[V])
+    write_str(file_handler,"spatialEE",(@sprintf "#%24s%24s%24s%24s%24s%24s%24s%24s%24s%24s%24s%24s%24s\n" "V" "S₁(n=$(ℓsize))" "S₂(n=$(ℓsize))" "S₃(n=$(ℓsize))" "S₄(n=$(ℓsize))" "S₅(n=$(ℓsize))" "S₆(n=$(ℓsize))" "S₇(n=$(ℓsize))" "S₈(n=$(ℓsize))" "S₉(n=$(ℓsize))" "S₁₀(n=$(ℓsize))" "S₀₋₅(n=$(ℓsize))" "Sinf(n=$(ℓsize))");replace_list=[V])
     end
     # 2.3 g2
     if c[:g2] 
