@@ -102,9 +102,6 @@ function particle_entropy_Ts(L::Int, N::Int, Asize::Int, d::Vector{ComplexF64}, 
         λ[q*NumOfCyclesA+1:q*NumOfCyclesA+NumOfCyclesA] = S[1:NumOfCyclesA]
     end
 
-    # sort lambda for numerical stability
-    sort!(λ)
-
     # construct the spatial OBDM
     if measure_obdm && Asize == 1
         obdm = zeros(Float64, DimA)
@@ -119,6 +116,9 @@ function particle_entropy_Ts(L::Int, N::Int, Asize::Int, d::Vector{ComplexF64}, 
             obdm[i] = real(AdA_elem)
         end
     end
+
+    # sort lambda for numerical stability
+    sort!(λ)
 
     # check for numerical errors, as normalization should be 1.0
     err = abs(sum(λ .^ 1) - 1.0)
